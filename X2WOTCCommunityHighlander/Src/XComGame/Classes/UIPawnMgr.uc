@@ -594,6 +594,12 @@ simulated function DestroyPawns(int StoreIdx, out array<PawnInfo> PawnStore)
 	// Added variable for Issue #885
 	local int i;
 
+	// Start Issue #1192
+	/// HL-Docs: ref:Bugfixes; issue:1192
+	/// Add call to StopSounds to remove sound effects for destroyed pawns.
+	PawnStore[StoreIdx].Pawn.StopSounds();
+	// End Issue #1192
+
 	PawnStore[StoreIdx].Pawn.Destroy();
 	PawnStore[StoreIdx].Pawn = none;
 	for ( idx = 0; idx < PawnStore[StoreIdx].Cosmetics.Length; ++idx )
@@ -637,6 +643,13 @@ simulated function ReleasePawnInternal(Actor referrer, int UnitRef, out array<Pa
 {
 	local int PawnInfoIndex;
 
+	// Added variables for Issue #1192
+	local XComUnitPawn CosmeticPawn;
+	local XComGameState_Unit UnitState, AttachedUnitState;
+	local array<XComGameState_Unit> AttachedUnits;
+	local int CosmeticPawnIndex;
+
+
 	PawnInfoIndex = PawnStore.Find('PawnRef', UnitRef);
 	if (PawnInfoIndex == -1)
 	{
@@ -644,15 +657,79 @@ simulated function ReleasePawnInternal(Actor referrer, int UnitRef, out array<Pa
 	}
 	else if(bForce) // don't remove the entry from the array to preserve the Referrers
 	{
+
+		// Start Issue #1192
+		/// HL-Docs: ref:Bugfixes; issue:1192
+		/// Remove Cosmetic pawns when the associated main pawn is removed.
+
+		// Grab the unit
+		UnitState = GetUnitState(UnitRef);
+
+		if(UnitState != None)
+		{
+			// Populate attached units from the unit state. Assumes that the output of UnitState.GetAttachedUnits is always cosmetic pawns.
+			UnitState.GetAttachedUnits(AttachedUnits);
+
+			// Loop over all attached units and remove them
+			foreach AttachedUnits (AttachedUnitState)
+			{
+				// Grab the pawn for the returned attached unit state.
+				CosmeticPawn = RequestPawnByState(referrer, AttachedUnitState);
+
+				if (CosmeticPawn != none)
+				{
+					CosmeticPawnIndex = PawnStore.Find('PawnRef', CosmeticPawn.ObjectId);
+					if (CosmeticPawnIndex != -1)
+					{
+						// Actually remove the cosmetic pawn.
+						DestroyPawns(CosmeticPawnIndex, PawnStore);
+						PawnStore[CosmeticPawnIndex].bPawnRemoved = true;
+					}
+				}
+			}
+		}
+		// End issue #1192
+
 		PawnStore[PawnInfoIndex].Referrers.RemoveItem(referrer);
 		DestroyPawns(PawnInfoIndex, PawnStore);
 		PawnStore[PawnInfoIndex].bPawnRemoved = true;
 	}
 	else
-	{		
+	{
 		PawnStore[PawnInfoIndex].Referrers.RemoveItem(referrer);
 		if(PawnStore[PawnInfoIndex].Referrers.Length == 0)
 		{
+
+			// Start Issue #1192 - repeat of above code but in other part of if/else block
+
+			// Grab the unit
+			UnitState = GetUnitState(UnitRef);
+
+			if(UnitState != None)
+			{
+				// Populate attached units from the unit state. Assumes that the output of UnitState.GetAttachedUnits is always cosmetic pawns.
+				UnitState.GetAttachedUnits(AttachedUnits);
+
+				// Loop over all attached units and remove them
+				foreach AttachedUnits (AttachedUnitState)
+				{
+					// Grab the pawn for the returned attached unit state.
+					CosmeticPawn = RequestPawnByState(referrer, AttachedUnitState);
+
+					if (CosmeticPawn != none)
+					{
+						CosmeticPawnIndex = PawnStore.Find('PawnRef', CosmeticPawn.ObjectId);
+						if (CosmeticPawnIndex != -1)
+						{
+							// Actually remove the cosmetic pawn.
+							DestroyPawns(CosmeticPawnIndex, PawnStore);
+							PawnStore[CosmeticPawnIndex].bPawnRemoved = true;
+						}
+					}
+				}
+			}
+			// End issue #1192
+
 			DestroyPawns(PawnInfoIndex, PawnStore);
 			PawnStore.Remove(PawnInfoIndex, 1);
 		}
