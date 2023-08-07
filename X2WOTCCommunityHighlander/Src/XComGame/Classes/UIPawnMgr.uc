@@ -656,7 +656,8 @@ simulated function ReleasePawnInternal(Actor referrer, int UnitRef, out array<Pa
 		// Start Issue #1192 - gremlin/bit section
 		CosmeticPawn = GetCosmeticPawn(eInvSlot_SecondaryWeapon, UnitRef);
 
-		//use similar code to rest of function, but for the Cosmetic pawn
+		//use similar code to rest of function, but for the Cosmetic pawn to remove it when it is supposed to be removed.
+
 		if (CosmeticPawn!= none)
 		{
 			CosmeticPawnIndex = PawnStore.Find('PawnRef', CosmeticPawn.ObjectId);
