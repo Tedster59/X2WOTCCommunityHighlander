@@ -2647,13 +2647,16 @@ function EndTacticalHealthMod()
 	local float HealthPercent, NewHealth, SWHeal;
 	local int RoundedNewHealth, HealthLost, NewMissingHP;
 
-	HealthLost = HighestHP - LowestHP;
-
-	if (LowestHP > 0 && `SecondWaveEnabled('BetaStrike'))  // Immediately Heal 1/2 Damage
+	HealthLost = HighestHP - LowestHP;	
+	/// HL-Docs: feature:BetaStrikeEndTacticalHeal; issue:917; tags:
+	if (LowestHP > 0 && `SecondWaveEnabled('BetaStrike'))  // Immediately Heal 1/2 Damage 
 	{
-		SWHeal = FFloor( HealthLost / 2 );
-		LowestHP += SWHeal;
-		HealthLost -= SWHeal;
+		if  (!class'CHHelpers'.default.bDisableBetaStrikePostMissionHealing)
+			{
+				SWHeal = FFloor( HealthLost / 2 );
+				LowestHP += SWHeal;
+				HealthLost -= SWHeal;
+			}
 	}
 
 	// If Dead or never injured, return
@@ -4198,7 +4201,7 @@ function bool HasHeavyWeapon(optional XComGameState CheckGameState)
 	/// HL-Docs: feature:OverrideHasHeavyWeapon; issue:172; tags:loadoutslots,strategy
 	/// The `OverrideHasHeavyWeapon` event allows mods to override the base game logic
 	/// that determines whether a Unit has a Heavy Weapon Slot or not.
-	/// Keep in mind the [GetNumHeavyWeaponSlotsOverride()](../loadoutslots/GetNumHeavyWeaponSlotsOverride.md) X2DLCInfo method may override
+	/// Keep in mind the [GetNumHeavyWeaponSlotsOverride()](../strategy/GetNumHeavyWeaponSlotsOverride.md) X2DLCInfo method may override
 	/// this later.
 	///
 	/// ```event
@@ -9714,7 +9717,22 @@ function EventListenerReturn OnAbilityActivated(Object EventData, Object EventSo
 					GetKeystoneVisibilityLocation(SoundTileLocation);
 				}
 
-				GetEnemiesInRange(SoundTileLocation, SoundRange, Enemies);
+				// Start Issue #620
+				/// HL-Docs: feature:ConsiderAlliesforSoundAlerts; issue:620; tags:tactical
+				/// Normally units firing weapons alert only their enemies.
+				/// This feature allows units to alert their allies as well when they fire.
+				/// Note that this will not have any effect unless a mod has turned on
+				/// yellow alerts in `XComGameState_AIUnitData::ShouldEnemyFactionsTriggerAlertsOutsidePlayerVision()`,
+				/// since by default alert data is not recorded for sounds outside of XCom's vision.
+				if (class'CHHelpers'.default.bConsiderAlliesforSoundAlerts)
+				{
+					GetUnitsInRange(SoundTileLocation, SoundRange, Enemies);
+				}
+				else
+				{
+					GetEnemiesInRange(SoundTileLocation, SoundRange, Enemies);
+				}
+				// End Issue #620
 
 				`LogAI("Weapon sound @ Tile("$SoundTileLocation.X$","@SoundTileLocation.Y$","@SoundTileLocation.Z$") - Found"@Enemies.Length@"enemies in range ("$SoundRange$" meters)");
 				foreach Enemies(EnemyRef)
@@ -10908,6 +10926,47 @@ function GetUnitsInRangeOnTeam(ETeam Team, TTile kLocation, int nMeters, out arr
 	}
 }
 // End Issue #510
+
+// Start Issue #620
+/// HL-Docs: ref:ConsiderAlliesforSoundAlerts
+// Copied from XComGameState_Unit::GetEnemiesInRange(), except will include all units within
+// the specified range.
+private function GetUnitsInRange(TTile kLocation, int nMeters, out array<StateObjectReference> OutUnits)
+{
+	local vector vCenter, vLoc;
+	local float fDistSq;
+	local XComGameState_Unit kUnit;
+	local XComGameStateHistory History;
+	local eTeam Team;
+	local float AudioDistanceRadius, UnitHearingRadius, RadiiSumSquared;
+
+	History = `XCOMHISTORY;
+	vCenter = `XWORLD.GetPositionFromTileCoordinates(kLocation);
+	AudioDistanceRadius = `METERSTOUNITS(nMeters);
+	fDistSq = Square(AudioDistanceRadius);
+
+	foreach History.IterateByClassType(class'XComGameState_Unit', kUnit)
+	{
+		Team = kUnit.GetTeam();
+		if( Team != eTeam_Neutral && kUnit.IsAlive() )
+		{
+			vLoc = `XWORLD.GetPositionFromTileCoordinates(kUnit.TileLocation);
+			UnitHearingRadius = kUnit.GetCurrentStat(eStat_HearingRadius);
+
+			RadiiSumSquared = fDistSq;
+			if( UnitHearingRadius != 0 )
+			{
+				RadiiSumSquared = Square(AudioDistanceRadius + UnitHearingRadius);
+			}
+
+			if( VSizeSq(vLoc - vCenter) < RadiiSumSquared )
+			{
+				OutUnits.AddItem(kUnit.GetReference());
+			}
+		}
+	}
+}
+// End Issue #620
 
 native function float GetConcealmentDetectionDistance(const ref XComGameState_Unit DetectorUnit);
 

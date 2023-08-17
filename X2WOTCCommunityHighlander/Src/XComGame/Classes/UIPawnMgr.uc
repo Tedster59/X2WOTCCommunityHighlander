@@ -642,7 +642,9 @@ simulated function DestroyPawns(int StoreIdx, out array<PawnInfo> PawnStore)
 	// Added variable for Issue #885
 	local int i;
 
-	// Start Issue #1192 - Add call to StopSounds to remove sound effects for destroyed pawns.
+	// Start Issue #1192
+	/// HL-Docs: ref:Bugfixes; issue:1192
+	/// Add call to StopSounds to remove sound effects for destroyed pawns.
 	PawnStore[StoreIdx].Pawn.StopSounds();
 	// End Issue #1192
 
