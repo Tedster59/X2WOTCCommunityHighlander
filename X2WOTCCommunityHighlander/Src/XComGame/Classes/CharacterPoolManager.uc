@@ -292,9 +292,18 @@ function RemoveUnit( XComGameState_Unit Character )
 	CharacterPool.RemoveItem(Character);
 }
 
-function ECharacterPoolSelectionMode GetSelectionMode(ECharacterPoolSelectionMode OverrideMode)
+
+// Custom version for Illogical that gives pool for hero mode and random for others.
+function ECharacterPoolSelectionMode GetSelectionMode(ECharacterPoolSelectionMode OverrideMode, optional name TemplateName = 'none')
 {
 
+	if(TemplateName == 'ReaperSoldier' || TemplateName == 'SkirmisherSoldier' || TemplateName == 'TemplarSoldier')
+		return eCPSM_PoolOnly;
+	else
+		return eCPSM_RandomOnly;
+	
+
+	//// original below
 	if( OverrideMode != eCPSM_None && OverrideMode != eCPSM_Mixed )
 		return OverrideMode;
 
