@@ -5,7 +5,7 @@ $version_block = @'
 defaultproperties
 {
 	MajorVersion = 1;
-	MinorVersion = 27;
+	MinorVersion = 28;
 	PatchVersion = 1;
 	Commit = "%COMMIT%";
 }
