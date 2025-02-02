@@ -128,7 +128,7 @@ function InternalRollForAbilityHit(XComGameState_Ability kAbility, AvailableTarg
 	local XComGameState_Effect EffectState;
 	local bool bRolledResultIsAMiss, bModHitRoll;
 	local bool HitsAreCrits;
-	local string LogMsg;
+	local string LogMsg, HitLogMsg;
 	local ETeam CurrentPlayerTeam;
 	local ShotBreakdown m_ShotBreakdown;
 
@@ -301,6 +301,21 @@ function InternalRollForAbilityHit(XComGameState_Ability kAbility, AvailableTarg
 		LogMsg = repl(LogMsg, "#Roll", RandRoll);
 		LogMsg = repl(LogMsg, "#Result", class'X2TacticalGameRulesetDataStructures'.default.m_aAbilityHitResultStrings[Result]);
 		`COMBATLOG(LogMsg);
+
+		HitLogMsg = UnitState.GetName(eNameType_RankFull);
+		HitLogMsg $= " uses ";
+		HitLogMsg $= kAbility.GetMyTemplate().LocFriendlyName;
+		HitLogMsg $= " against ";
+		HitLogMsg $= TargetState.GetName(eNameType_RankFull) $ ".\n";
+		HitLogMsg $= "Shot breakdown\: Hit\:" @ m_ShotBreakdown.ResultTable[0];
+		HitLogMsg $= " \\ Crit\:" @ string(m_ShotBreakdown.ResultTable[0]+m_ShotBreakdown.ResultTable[1]);
+		HitLogMsg $= " \\ Graze\:" @ string(m_ShotBreakdown.ResultTable[0]+m_ShotBreakdown.ResultTable[1]+m_ShotBreakdown.ResultTable[2]) $ "\n";
+		HitLogMsg $= "Total Hit Chance\:" @ HitChance $"% Roll:" @RandRoll $"\n";
+		HitLogMsg $= "Aim Assist flipped the result?" @ bModHitRoll $"\n";
+		HitLogMsg $= "Adjusted Hit Chance (>0 if aim assist checked):" @ ModifiedHitChance;
+		HitLogMsg $= "\nFinal Result:" @ class'X2TacticalGameRulesetDataStructures'.default.m_aAbilityHitResultStrings[Result];
+		HitLogMsg $= "\n ===============";
+		UIHitLog(`SCREENSTACK.GetFirstInstanceOf(class'UIHitLog')).AddText(HitLogMsg);
 	}
 }
 
