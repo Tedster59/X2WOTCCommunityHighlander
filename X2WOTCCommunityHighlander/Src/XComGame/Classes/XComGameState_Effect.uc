@@ -245,9 +245,10 @@ function PostCreateInit(EffectAppliedData InApplyEffectParameters, GameRuleState
 	local X2Effect_Persistent EffectTemplate;
 	local XComGameStateHistory History;
 	local X2EventManager EventMgr;
-	local XComGameStateContext_Ability AbilityContext;
-	local X2AbilityTemplate AbilityTemplate;
-	local X2AbilityMultiTarget_BurstFire BurstFire;
+	// Issue #1380: no longer used
+	// local XComGameStateContext_Ability AbilityContext;
+	// local X2AbilityTemplate AbilityTemplate;
+	// local X2AbilityMultiTarget_BurstFire BurstFire;
 	local XComGameState_AIGroup GroupState;
 
 	History = `XCOMHISTORY;
@@ -266,19 +267,28 @@ function PostCreateInit(EffectAppliedData InApplyEffectParameters, GameRuleState
 	if (EffectTemplate.bStackOnRefresh)
 	{
 		iStacks = 1;
-		AbilityContext = XComGameStateContext_Ability(NewGameState.GetContext());
-		if (AbilityContext != none && AbilityContext.InputContext.PrimaryTarget.ObjectID == ApplyEffectParameters.TargetStateObjectRef.ObjectID)
-		{
-			AbilityTemplate = class'X2AbilityTemplateManager'.static.GetAbilityTemplateManager().FindAbilityTemplate(AbilityContext.InputContext.AbilityTemplateName);
-			if (AbilityTemplate != none)
-			{
-				BurstFire = X2AbilityMultiTarget_BurstFire(AbilityTemplate.AbilityMultiTargetStyle);
-				if (BurstFire != none)
-				{
-					iStacks += BurstFire.NumExtraShots;
-				}
-			}
-		}
+		
+		// Start Issue #1380
+		/// HL-Docs: ref:Bugfixes; issue:1380
+		/// Fix bug where burst fire abilities with stacking effects were applying the wrong number of effect stacks to the
+		/// target. This fix comments out base-game 'special handling' for burst-fire abilities - since each shot in the burst
+		/// is handled independently, the stacking effects are already incremented in the onRefresh function so it is not 
+		/// necessary to additionally adjust them by the number of extra burst-fire shots when the ability is initiated.
+
+		//	AbilityContext = XComGameStateContext_Ability(NewGameState.GetContext());
+		//	if (AbilityContext != none && AbilityContext.InputContext.PrimaryTarget.ObjectID == ApplyEffectParameters.TargetStateObjectRef.ObjectID)
+		//	{
+		//		AbilityTemplate = class'X2AbilityTemplateManager'.static.GetAbilityTemplateManager().FindAbilityTemplate(AbilityContext.InputContext.AbilityTemplateName);
+		//		if (AbilityTemplate != none)
+		//		{
+		//			BurstFire = X2AbilityMultiTarget_BurstFire(AbilityTemplate.AbilityMultiTargetStyle);
+		//			if (BurstFire != none)
+		//			{
+		//				iStacks += BurstFire.NumExtraShots;
+		//			}
+		//		}
+		//	}
+		// End Issue #1380
 	}
 
 	PlayerState = XComGameState_Player(History.GetGameStateForObjectID(ApplyEffectParameters.PlayerStateObjectRef.ObjectID));
@@ -380,9 +390,11 @@ function PostCreateInit(EffectAppliedData InApplyEffectParameters, GameRuleState
 function OnRefresh(EffectAppliedData NewApplyEffectParameters, XComGameState NewGameState)
 {
 	local X2Effect_Persistent EffectTemplate;
-	local XComGameStateContext_Ability AbilityContext;
-	local X2AbilityTemplate AbilityTemplate;
-	local X2AbilityMultiTarget_BurstFire BurstFire;
+
+	// Issue #1380: no longer used
+	// local XComGameStateContext_Ability AbilityContext;
+	// local X2AbilityTemplate AbilityTemplate;
+	// local X2AbilityMultiTarget_BurstFire BurstFire;
 	local XComGameState_BaseObject Target;  // Issue #475
 
 	EffectTemplate = GetX2Effect();
@@ -393,19 +405,23 @@ function OnRefresh(EffectAppliedData NewApplyEffectParameters, XComGameState New
 	if (EffectTemplate.bStackOnRefresh)
 	{
 		iStacks++;
-		AbilityContext = XComGameStateContext_Ability(NewGameState.GetContext());
-		if (AbilityContext != none && AbilityContext.InputContext.PrimaryTarget.ObjectID == ApplyEffectParameters.TargetStateObjectRef.ObjectID)
-		{
-			AbilityTemplate = class'X2AbilityTemplateManager'.static.GetAbilityTemplateManager().FindAbilityTemplate(AbilityContext.InputContext.AbilityTemplateName);
-			if (AbilityTemplate != none)
-			{
-				BurstFire = X2AbilityMultiTarget_BurstFire(AbilityTemplate.AbilityMultiTargetStyle);
-				if (BurstFire != none)
-				{
-					iStacks += BurstFire.NumExtraShots;
-				}
-			}
-		}
+		// Start Issue #1380 - Since onRefresh called for each burst-fire shot, we don't need to adjust the 
+		// number of effect stacks by the number of burst fire shots in this function either.
+
+		//	AbilityContext = XComGameStateContext_Ability(NewGameState.GetContext());
+		//	if (AbilityContext != none && AbilityContext.InputContext.PrimaryTarget.ObjectID == ApplyEffectParameters.TargetStateObjectRef.ObjectID)
+		//	{
+		//		AbilityTemplate = class'X2AbilityTemplateManager'.static.GetAbilityTemplateManager().FindAbilityTemplate(AbilityContext.InputContext.AbilityTemplateName);
+		//		if (AbilityTemplate != none)
+		//		{
+		//			BurstFire = X2AbilityMultiTarget_BurstFire(AbilityTemplate.AbilityMultiTargetStyle);
+		//			if (BurstFire != none)
+		//			{
+		//				iStacks += BurstFire.NumExtraShots;
+		//			}
+		//		}
+		//	}
+		// End Issue #1380
 	}
 
 	// Start Issue #475

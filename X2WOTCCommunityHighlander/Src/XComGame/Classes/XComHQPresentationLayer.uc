@@ -287,6 +287,7 @@ simulated function ExitPostMissionSequence()
 	EventManager.TriggerEvent('PostMissionDone', XComHQ, XComHQ, NewGameState);
 	XComHQ.ResetToDoWidgetWarnings();
 	XComHQ.PlayedAmbientSpeakers.Length = 0; // Reset availability of ambient speaker lines
+	XComHQ.arrGeneratedMissionData.Length = 0; // Issue #1466 - clear the cached data that was added in XCGSC_StrategyGameRule.ProcessMissionResults()
 	
 	// Clear rewards recap data
 	ResistanceHQ = XComGameState_HeadquartersResistance(NewGameState.ModifyStateObject(class'XComGameState_HeadquartersResistance', ResistanceHQ.ObjectID));
@@ -1450,7 +1451,8 @@ function UIArmory_Promotion(StateObjectReference UnitRef, optional bool bInstant
 
 		// Check for rank up to Sergeant or Major
 		bValidRankUp = (PreviousRank < 3 && Unit.GetSoldierRank() >= 3) || (PreviousRank < 6 && Unit.GetSoldierRank() >= 6);
-		if (!Unit.bCaptured && Unit.IsAlive() && bValidRankUp)
+		// Single Line for Issue #1453 - Additional config gate to disable auto-generation of promotion photo
+		if (!Unit.bCaptured && Unit.IsAlive() && bValidRankUp && !class'CHHelpers'.default.bDisableAutomaticPromotionPhoto)
 		{
 			`HQPRES.GetPhotoboothAutoGen().AddPromotedSoldier(Unit.GetReference());
 			`HQPRES.GetPhotoboothAutoGen().RequestPhotos();

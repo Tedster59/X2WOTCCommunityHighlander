@@ -577,6 +577,9 @@
     <Content Include="Src\XComGame\Classes\X2Action_Fire.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\XComGame\Classes\X2Action_Knockback.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\XComGame\Classes\X2Action_PlaySoundAndFlyOver.uc">
       <SubType>Content</SubType>
     </Content>
@@ -605,6 +608,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\XComGame\Classes\X2ChosenActionTemplate.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\XComGame\Classes\X2Condition_Restoration.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\XComGame\Classes\X2Condition_RevivalProtocol.uc">
@@ -652,6 +658,9 @@
     <Content Include="Src\XComGame\Classes\X2Effect_HomingMineDamage.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\XComGame\Classes\X2Effect_Knockback.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\XComGame\Classes\X2Effect_LaserSight.uc">
       <SubType>Content</SubType>
     </Content>
@@ -668,6 +677,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\XComGame\Classes\X2Effect_Persistent.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\XComGame\Classes\X2HackReward.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\XComGame\Classes\X2HackRewardTemplateManager.uc">
@@ -897,11 +909,16 @@
     </Content>
     <Content Include="Src\XComGame\Classes\XComGameState_Objective.uc">
       <SubType>Content</SubType>
+    <Content Include="Src\XComGame\Classes\XComGameState_PointOfInterest.uc">
+      <SubType>Content</SubType>
     </Content>
     <Content Include="Src\XComGame\Classes\XComGameState_RegionLink.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\XComGame\Classes\XComGameState_ResistanceFaction.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\XComGame\Classes\XComGameState_ResourceCache.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\XComGame\Classes\XComGameState_StaffSlot.uc">
