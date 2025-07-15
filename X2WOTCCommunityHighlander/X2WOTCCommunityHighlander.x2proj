@@ -909,6 +909,7 @@
     </Content>
     <Content Include="Src\XComGame\Classes\XComGameState_Objective.uc">
       <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\XComGame\Classes\XComGameState_PointOfInterest.uc">
       <SubType>Content</SubType>
     </Content>
