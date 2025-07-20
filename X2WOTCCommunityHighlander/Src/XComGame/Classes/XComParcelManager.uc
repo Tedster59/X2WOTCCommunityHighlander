@@ -542,7 +542,7 @@ private function CacheParcels()
 		}
 	}
 
-	
+	`Log("Number of parcels on the map" @arrParcels.Length,,'TedLog');
 	// sort the parcels. This ensures that load order doesn't change their location in
 	// the array from run to run
 	arrParcels.Sort(SortParcels);
@@ -614,6 +614,7 @@ private function array<ParcelDefinition> GetRandomizedParcelDefinitions()
 		}
 	}
 
+	`Log("Parcel definitions length that match:" @Result.Length,,'TedLog');
 	// and return
 	return Result;
 }
@@ -746,6 +747,7 @@ private function ChooseNonObjectiveParcels(array<ParcelDefinition> RandomizedPar
 			CurrentParcelDef = RandomizedParcelDefinitions[BacktrackStack[Index].CurrentParcelIndex];
 			InitParcelWithDef(ParcelsToLayout[Index], CurrentParcelDef, BacktrackStack[Index].Rotation, false );
 		}
+		`Log("found a complete parcel layout without dupes",,'TedLog');
 	}
 	else
 	{
@@ -766,6 +768,7 @@ private function ChooseNonObjectiveParcels(array<ParcelDefinition> RandomizedPar
 				}
 			}
 		}
+		`Log("No non-dupe layout available, just filling it out",,'TedLog');
 	}
 
 	// clean this up so it isn't stale
@@ -852,6 +855,7 @@ private function ChooseObjectiveParcel(array<ParcelDefinition> RandomizedParcelD
 	// try every combination iteratively until we find a parcel that can take a valid objective def
 	foreach ValidDefinitions(ParcelDef)
 	{
+		`Log("Checking Parceldef" @ParcelDef.mapname,,'TedLog');
 		for(ParcelIndex = 0; ParcelIndex < arrParcels.Length; ParcelIndex++)
 		{
 			Parcel = arrParcels[ParcelIndex];
@@ -865,6 +869,7 @@ private function ChooseObjectiveParcel(array<ParcelDefinition> RandomizedParcelD
 				BattleDataState.MapData.ObjectiveParcelIndex = ParcelIndex;
 				InitParcelWithDef(Parcel, ParcelDef, Rotation, false);				
 				PlayerController.UpdateUIBriefingScreen(ParcelDef.MapName);
+				`Log("Objective Parcel selected",,'TedLog');
 				return;
 			}
 		}
@@ -1283,9 +1288,12 @@ function RebuildWorldData()
 	//fXY = 999999;
 	//fZ = 999999;
 
+	`Log("RebuildWorldData called" @GetScriptTrace(),,'TedLog');
+
 	//Only rebuild the world data if the level volume has a non-zero volume
 	if( `XWORLD.NumX > 0 )
 	{
+		`Log("World data being rebuilt",,'TedLog');
 		`XWORLD.bEnableRebuildTileData = true; //World data should not be processed prior to this point during load
 		`XWORLD.BuildWorldData( none );
 		`XWORLD.RebuildDestructionData();	
@@ -1875,6 +1883,7 @@ function PostLoadSetObjectiveParcel()
 		StoredParcelData = BattleDataState.MapData.ParcelData[0]; //The first element is the objective parcel
 		ObjectiveParcel = `XWORLDINFO.Spawn(class'XComParcel', `XWORLDINFO,, StoredParcelData.Location, StoredParcelData.Rotation);
 		arrParcels.AddItem(ObjectiveParcel);
+		`Log("Setting ObjectiveParcel" @StoredParcelData.MapName,,'TedLog');
 	}
 	else
 	{
@@ -1936,21 +1945,26 @@ function GenerateMapUpdatePhase2()
 //Phase 3 is waiting for tile data to load
 function GenerateMapUpdatePhase3()
 {	
+	`Log("GenerateMapUpdatePhase3",,'TedLog');
 	if (`MAPS.IsStreamingComplete() && IsStreamingComplete()) //Wait for the environment lighting map to load
 	{
+		`Log("Streaming is complete");
 		//If using seamless travel, there will be a black screen displayed while this blocking operation is performed.
 		if(class'XComMapManager'.default.bUseSeamlessTravelToTactical)
 		{
+			`Log("bUseSeamlessTravelToTactical is true, using Synchronous world data building",,'Tedlog');
 			RebuildWorldData(); //Synchronous world data building
 		}
 		else
 		{
+			`Log("Starting Async Build World Data",,'TedLog');
 			`XWORLD.StartAsyncBuildWorldData(); //Builds world data on a worker thread
 		}
 		GenerateMapUpdatePhase4();
 	}
 	else
 	{
+		`Log("Streaming not complete, waiting...",,'TedLog');
 		`BATTLE.SetTimer(0.1f, false, nameof(GenerateMapUpdatePhase3), self);
 	}
 }
@@ -1958,6 +1972,7 @@ function GenerateMapUpdatePhase3()
 //Phase 4 is waiting for tile data to load
 function GenerateMapUpdatePhase4()
 {
+	`Log("We made it to phase 4",,'Tedlog');
 	//Wait for world data to finish building on the worker thread, or if we are seamless travel the world data has been build synchronously so proceed
 	if(`XWORLD.AsyncBuildWorldDataComplete() || class'XComMapManager'.default.bUseSeamlessTravelToTactical)
 	{

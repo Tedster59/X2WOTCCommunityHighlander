@@ -8218,6 +8218,7 @@ function bool AddItemToInventory(XComGameState_Item Item, EInventorySlot Slot, X
 
 		return true;
 	}
+	//`Log("CanAdd call failed for item",,'TedLog');
 	return false;
 }
 //issue #114: function can now take in item states for new hook
@@ -8243,6 +8244,7 @@ simulated function bool CanAddItemToInventory(const X2ItemTemplate ItemTemplate,
 	{
 		if(DLCInfos[i].CanAddItemToInventory_CH_Improved(bCanAddItem, Slot, ItemTemplate, Quantity, self, CheckGameState, BlankString, Item))
 		{
+		//`Log("DLC adjusted overriding adding item",,'TedLog');
 			return bCanAddItem > 0;
 		}
 	}
@@ -11514,6 +11516,7 @@ function ApplyInventoryLoadout(XComGameState ModifyGameState, optional name NonD
 	{
 		if (Loadout.LoadoutName == UseLoadoutName)
 		{
+			`Log("Found loadout:" @UseLoadoutName,,'TedLog');
 			bFoundLoadout = true;
 			break;
 		}
@@ -11544,7 +11547,7 @@ function ApplyInventoryLoadout(XComGameState ModifyGameState, optional name NonD
 
 					NewItem.WeaponAppearance.nmWeaponPattern = kAppearance.nmWeaponPattern;
 				}
-
+				`Log("Adding Item" @EquipmentTemplate.DataName,,'TedLog');
 				AddItemToInventory(NewItem, EquipmentTemplate.InventorySlot, ModifyGameState);
 			}
 		}
@@ -12807,6 +12810,7 @@ private function array<X2EquipmentTemplate> GetCompleteDefaultLoadout()
 						if(EquipmentTemplate.InventorySlot == CompleteDefaultLoadout[idx].InventorySlot)
 						{
 							bCanAdd = false;
+							//`Log("Can't add item because inventory slot mismatch:" @EquipmentTemplate.DataName,,'TedLog');
 							break;
 						}
 					}

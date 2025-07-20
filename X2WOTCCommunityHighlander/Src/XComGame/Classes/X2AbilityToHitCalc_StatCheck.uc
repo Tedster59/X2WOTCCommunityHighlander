@@ -101,6 +101,7 @@ function RollForAbilityHit(XComGameState_Ability kAbility, AvailableTarget kTarg
 	local OverriddenEffectsByType EmptyOverriddenByType;
 	local StatContestOverrideData StatContestOverrideInfo;
 	local X2AbilityTemplate AbilityTemplate;
+	local string HitLogMsg;
 
 	`log("===RollForAbilityHit===",,'XCom_HitRolls');
 	`log("Ability:" @ kAbility.GetMyTemplateName() @ "Target:" @ kTarget.PrimaryTarget.ObjectID,,'XCom_HitRolls');

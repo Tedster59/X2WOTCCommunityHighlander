@@ -88,6 +88,7 @@ function RollForAbilityHit(XComGameState_Ability kAbility, AvailableTarget kTarg
 	if (bMultiTargetOnly)
 	{
 		ResultContext.HitResult = eHit_Success;
+		`Log("MultiTargetOnly flagged",,'TedLog');
 	}
 	else
 	{
@@ -307,6 +308,23 @@ function InternalRollForAbilityHit(XComGameState_Ability kAbility, AvailableTarg
 		HitLogMsg $= kAbility.GetMyTemplate().LocFriendlyName;
 		HitLogMsg $= " against ";
 		HitLogMsg $= TargetState.GetName(eNameType_RankFull) $ ".\n";
+		HitLogMsg $= "Shot breakdown\: Hit\:" @ m_ShotBreakdown.ResultTable[0];
+		HitLogMsg $= " \\ Crit\:" @ string(m_ShotBreakdown.ResultTable[0]+m_ShotBreakdown.ResultTable[1]);
+		HitLogMsg $= " \\ Graze\:" @ string(m_ShotBreakdown.ResultTable[0]+m_ShotBreakdown.ResultTable[1]+m_ShotBreakdown.ResultTable[2]) $ "\n";
+		HitLogMsg $= "Total Hit Chance\:" @ HitChance $"% Roll:" @RandRoll $"\n";
+		HitLogMsg $= "Aim Assist flipped the result?" @ bModHitRoll $"\n";
+		HitLogMsg $= "Adjusted Hit Chance (>0 if aim assist checked):" @ ModifiedHitChance;
+		HitLogMsg $= "\nFinal Result:" @ class'X2TacticalGameRulesetDataStructures'.default.m_aAbilityHitResultStrings[Result];
+		HitLogMsg $= "\n ===============";
+		UIHitLog(`SCREENSTACK.GetFirstInstanceOf(class'UIHitLog')).AddText(HitLogMsg);
+	}
+	else
+	{
+		HitLogMsg = UnitState.GetName(eNameType_RankFull);
+		HitLogMsg $= " uses ";
+		HitLogMsg $= kAbility.GetMyTemplate().LocFriendlyName;
+		HitLogMsg $= " against ";
+		HitLogMsg $= "object" $ ".\n";
 		HitLogMsg $= "Shot breakdown\: Hit\:" @ m_ShotBreakdown.ResultTable[0];
 		HitLogMsg $= " \\ Crit\:" @ string(m_ShotBreakdown.ResultTable[0]+m_ShotBreakdown.ResultTable[1]);
 		HitLogMsg $= " \\ Graze\:" @ string(m_ShotBreakdown.ResultTable[0]+m_ShotBreakdown.ResultTable[1]+m_ShotBreakdown.ResultTable[2]) $ "\n";

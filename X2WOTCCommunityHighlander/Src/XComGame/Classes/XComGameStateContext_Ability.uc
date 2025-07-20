@@ -1104,7 +1104,6 @@ static function XComGameStateContext_Ability BuildContextFromAbility(XComGameSta
 	{
 		AbilityContext.SetSendGameState( true );
 	}
-	
 	AbilityContext.InputContext.AbilityRef = AbilityState.GetReference();
 	AbilityContext.InputContext.AbilityTemplateName = AbilityState.GetMyTemplateName();
 
@@ -1144,6 +1143,7 @@ static function XComGameStateContext_Ability BuildContextFromAbility(XComGameSta
 	AbilityTemplate = AbilityState.GetMyTemplate();
 	if( AbilityTemplate.AbilityToHitCalc != none )
 	{
+		//`Log("Checking hitcalc RollForAbilityHit",,'TedLog');
 		kTarget.PrimaryTarget = AbilityContext.InputContext.PrimaryTarget;
 		kTarget.AdditionalTargets = AbilityContext.InputContext.MultiTargets;
 		AbilityTemplate.AbilityToHitCalc.RollForAbilityHit(AbilityState, kTarget, AbilityContext.ResultContext);

@@ -313,6 +313,8 @@ function bool AddAlertData( int AlertedUnitID, EAlertCause NewAlertCause, AlertA
 	`assert(NewAlertCause != eAC_None);
 	History = `XCOMHISTORY;
 
+	//`Log("AddAlertData call start.",,'TedLog');
+
 	AlertedUnit = XComGameState_Unit(History.GetGameStateForObjectID(AlertedUnitID));
 	if(AlertedUnit == none || AlertedUnit.IsDead())
 	{

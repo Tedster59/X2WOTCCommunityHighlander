@@ -1360,6 +1360,7 @@ private function GatherSpawnObjectives(ObjectiveSpawnInfo SpawnInfo, out array<O
 	// grab all spawns that are valid for this mission type
 	foreach Battle.AllActors(class'ObjectiveSpawnPossibility', Spawn)
 	{
+		`Log("Checking OSP" @Spawn.Name,,'TedLog');
 		if(Spawn.bBeenUsed)
 		{
 			// don't use the same spawn more than once
@@ -1373,6 +1374,7 @@ private function GatherSpawnObjectives(ObjectiveSpawnInfo SpawnInfo, out array<O
 			if (!MissionTypeSupported(Spawn, SpawnInfo.sMissionType))
 			{
 				// only use spawns with the same mission type
+				`Log("Mission Type not supported by OSP",,'TedLog');
 				continue;
 			}
 	
@@ -1380,6 +1382,7 @@ private function GatherSpawnObjectives(ObjectiveSpawnInfo SpawnInfo, out array<O
 			if(!IsSpawnInObjectiveParcel && !SpawnInfo.bCanSpawnOutsideObjectiveParcel)
 			{
 				// primary objectives only spawn in objective parcel (unless flagged otherwise)
+				`Log("Primary objectives only in objective parcels check failed");
 				continue;
 			}
 		}
@@ -1404,15 +1407,18 @@ private function GatherSpawnObjectives(ObjectiveSpawnInfo SpawnInfo, out array<O
 		if(TilesFromObjectiveParcelCenter < SpawnInfo.iMinTilesFromObjectiveCenter)
 		{
 			// not if too close to the objective parcel center
+			`Log("Too close to parcel center",,'TedLog');
 			continue;
 		}
 		else if(TilesFromObjectiveParcelCenter > SpawnInfo.iMaxTilesFromObjectiveCenter)
 		{
 			// and not if too far
+			`Log("Too far from parcel center",,'TedLog');
 			continue;
 		}
 
 		// all checks passed, this spawn is a valid option
+		`Log("Adding OSP to ValidSpawns",,'TedLog');
 		ValidSpawns.AddItem(Spawn);
 	}
 

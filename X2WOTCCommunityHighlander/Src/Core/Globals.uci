@@ -6,7 +6,7 @@
  * Never include this file before the class definition.
  */
 
-//`define AI_EXTRA_LOGGING ""
+// `define AI_EXTRA_LOGGING ""
  
 /**
  * Macro for including the current function name in a string.

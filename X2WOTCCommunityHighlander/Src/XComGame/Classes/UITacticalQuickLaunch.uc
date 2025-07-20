@@ -156,7 +156,7 @@ simulated function InitScreen(XComPlayerController InitController, UIMovie InitM
 
 	//Set up the info box element
 	InfoBoxContainer = Spawn(class'UIPanel', self).InitPanel();
-	InfoBoxContainer.AnchorTopRight().SetPosition(-550,50);
+	InfoBoxContainer.AnchorTopRight().SetPosition(-550,20);
 	BuildInfoBox();
 	InfoBoxContainer.DisableNavigation();
 	Navigator.HorizontalNavigation = true;
