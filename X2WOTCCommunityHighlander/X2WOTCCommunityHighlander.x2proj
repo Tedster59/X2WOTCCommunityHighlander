@@ -541,6 +541,9 @@
     <Content Include="Src\XComGame\Classes\X2Ability_DefaultBondmateAbilities.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\XComGame\Classes\X2Ability_PsiOperativeAbilitySet.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\XComGame\Classes\X2Ability_PsiWitch.uc">
       <SubType>Content</SubType>
     </Content>
@@ -566,6 +569,9 @@
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\XComGame\Classes\X2AbilityTrigger_EndOfMove.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\XComGame\Classes\X2Ability_TemplarAbilitySet.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\XComGame\Classes\X2Ability_TheLost.uc">
@@ -664,7 +670,13 @@
     <Content Include="Src\XComGame\Classes\X2Effect_LaserSight.uc">
       <SubType>Content</SubType>
     </Content>
+    <Content Include="Src\XComGame\Classes\X2Effect_PersistentVoidConduit.uc">
+      <SubType>Content</SubType>
+    </Content>
     <Content Include="Src\XComGame\Classes\X2Effect_Sustain.uc">
+      <SubType>Content</SubType>
+    </Content>
+    <Content Include="Src\XComGame\Classes\X2Effect_VoidConduit.uc">
       <SubType>Content</SubType>
     </Content>
     <Content Include="Src\XComGame\Classes\X2EncyclopediaTemplate.uc">
